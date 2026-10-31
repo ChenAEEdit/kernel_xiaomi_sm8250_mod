@@ -6,7 +6,7 @@ on:
       device:
         description: '选择设备代号'
         required: true
-        default: 'lmi'
+        default: 'alioth'
         type: choice
         options:
           - psyche
