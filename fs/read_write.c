@@ -591,13 +591,10 @@ extern bool ksu_vfs_read_hook __read_mostly;
 extern __attribute__((cold)) int ksu_handle_sys_read(unsigned int fd,
 			char __user **buf_ptr, size_t *count_ptr);
 #endif
-SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
+SYSCALL_DEFINE3(read, unsigned int, fd,
+                char __user *, buf, size_t, count)
 {
-#ifdef CONFIG_KSU
-	if (unlikely(ksu_vfs_read_hook))
-		ksu_handle_sys_read(fd, &buf, &count);
-#endif
-	return ksys_read(fd, buf, count);
+    return ksys_read(fd, buf, count);
 }
 
 ssize_t ksys_write(unsigned int fd, const char __user *buf, size_t count)
