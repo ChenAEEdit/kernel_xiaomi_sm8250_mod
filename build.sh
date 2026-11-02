@@ -95,7 +95,7 @@ echo "TARGET_DEVICE: $TARGET_DEVICE"
 
 if [ $KSU_ENABLE -eq 1 ]; then
     echo "KSU is enabled"
-    curl -LSs "https://raw.githubusercontent.com/ChenAEEdit/SukiSU-Ultra/main/kernel/setup.sh" | bash -s -ChenAE
+    curl -LSs "https://raw.githubusercontent.com/ChenAEEdit/SukiSU-Ultra/main/kernel/setup.sh" | bash -s ChenAE
 else
     echo "KSU is disabled"
 fi
