@@ -347,6 +347,15 @@ sed -i "s/${local_version_date_str}/${local_version_str}/g" arch/arm64/configs/$
 # ------------- End of Building for MIUI -------------
 #  If you don't need MIUI you can comment out the above block [Building for MIUI]
 
+echo "===== KernelSU CONFIG CHECK ====="
+
+grep -E '^CONFIG_(KSU|KSU_SUSFS|KPROBES|THREAD_INFO_IN_TASK)=' out/.config || true
+
+if ! grep -q '^CONFIG_KSU=y$' out/.config; then
+    echo "ERROR: CONFIG_KSU is not enabled!"
+    exit 1
+fi
+
 
 cd anykernel 
 
