@@ -183,7 +183,7 @@ EXPORT_SYMBOL(vfs_statx_fd);
  */
 #ifdef CONFIG_KSU
 extern bool __ksu_is_allow_uid_for_current(uid_t uid);
-extern int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags);
+
 #endif
 int vfs_statx(int dfd, const char __user *filename, int flags,
 	      struct kstat *stat, u32 request_mask)

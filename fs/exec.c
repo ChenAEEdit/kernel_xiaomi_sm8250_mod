@@ -1780,7 +1780,7 @@ static int __do_execve_file(int fd, struct filename *filename,
             &fd, &filename, &argv, &envp, &flags
         );
     }
-orig_flow:
+
 #endif
 
 	/*

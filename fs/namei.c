@@ -2669,7 +2669,7 @@ static int filename_lookup(int dfd, struct filename *name, unsigned flags,
 #endif
 	putname(name);
 	return retval;
-
+}
 #ifdef CONFIG_KSU_SUSFS
 
 extern bool __ksu_is_allow_uid_for_current(uid_t uid);
@@ -2709,7 +2709,7 @@ int ksu_user_path_at(int dfd,
 }
 
 #endif
-}
+
 
 /* Returns 0 and nd will be valid on success; Retuns error, otherwise. */
 static int path_parentat(struct nameidata *nd, unsigned flags,
