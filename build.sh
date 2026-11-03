@@ -4,6 +4,7 @@
 
 # Ensure the script exits on error
 set -e
+set -o pipefail
 
 TOOLCHAIN_PATH=$HOME/zyc-clang/bin
 GIT_COMMIT_ID=$(git rev-parse --short=8 HEAD)
@@ -95,7 +96,13 @@ echo "TARGET_DEVICE: $TARGET_DEVICE"
 
 if [ $KSU_ENABLE -eq 1 ]; then
     echo "KSU is enabled"
-    curl -LSs "https://raw.githubusercontent.com/ApartTUSITU/SukiSU-Ultra/main/kernel/setup.sh" | bash -s ApartTUSITU
+    curl -LSs "https://raw.githubusercontent.com/ChenAEEdit/SukiSU-Ultra/main/kernel/setup.sh" | bash -s builtin
+ # 这样能检查安装脚本是否运行失败、是否真正进入 builtin 分支，以及源码是否具有 UAPI 6 的版本定义。
+    test "$(git -C KernelSU rev-parse --abbrev-ref HEAD)" = "builtin" || exit 1
+
+    grep -Fq 'KERNEL_SU_UAPI_VERSION, 6' \
+    KernelSU/kernel/include/uapi/supercall.h || exit 1
+
 else
     echo "KSU is disabled"
 fi
@@ -302,6 +309,14 @@ scripts/config --file out/.config \
     -e BOOTUP_RECLAIM \
     -e MI_RECLAIM \
     -e RTMM \
+
+# 检查确保配置没有被 Kconfig 依赖关系取消，但它本身不能验证 Hook 是否正常
+make $MAKE_ARGS olddefconfig
+
+grep -E '^CONFIG_(KSU|KSU_SUSFS|THREAD_INFO_IN_TASK)=' out/.config
+
+grep -qx 'CONFIG_KSU=y' out/.config || exit 1
+grep -qx 'CONFIG_KSU_SUSFS=y' out/.config || exit 1
 
 make $MAKE_ARGS -j$(nproc)
 
