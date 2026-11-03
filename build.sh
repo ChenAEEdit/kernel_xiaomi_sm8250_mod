@@ -310,6 +310,7 @@ scripts/config --file out/.config \
     -e BOOTUP_RECLAIM \
     -e MI_RECLAIM \
     -e RTMM \
+    -d KSU_FEATURE_ADBROOT
 
 # 检查确保配置没有被 Kconfig 依赖关系取消，但它本身不能验证 Hook 是否正常
 make $MAKE_ARGS olddefconfig
