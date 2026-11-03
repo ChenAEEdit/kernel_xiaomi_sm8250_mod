@@ -275,7 +275,8 @@ if [ $KSU_ENABLE -eq 1 ]; then
     -e KSU_SUSFS_OPEN_REDIRECT \
     -e KSU_SUSFS_SUS_MAP \
     -e THREAD_INFO_IN_TASK \
-    -e KPM
+    -d KPM # 暂时不启用KPM
+    
 else
     scripts/config --file out/.config -d KSU
 fi

@@ -214,7 +214,16 @@ orig_flow:
 		lookup_flags |= LOOKUP_EMPTY;
 
 retry:
-	error = user_path_at(dfd, filename, lookup_flags, &path);
+// 删除原来 vfs_statx() 里的旧 KernelSU 调用块，以及已经不匹配的旧函数声明。
+#ifdef CONFIG_KSU_SUSFS
+    error = ksu_user_path_at(
+        dfd, filename, lookup_flags,
+        &path, &flags, true);
+#else
+    error = user_path_at(
+        dfd, filename, lookup_flags, &path);
+#endif
+
 	if (error)
 		goto out;
 

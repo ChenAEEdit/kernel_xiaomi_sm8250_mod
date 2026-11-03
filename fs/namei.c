@@ -2669,6 +2669,46 @@ static int filename_lookup(int dfd, struct filename *name, unsigned flags,
 #endif
 	putname(name);
 	return retval;
+
+#ifdef CONFIG_KSU_SUSFS
+
+extern bool __ksu_is_allow_uid_for_current(uid_t uid);
+
+extern int ksu_handle_stat(
+    int *dfd, struct filename **filename, int *flags);
+
+extern int ksu_handle_faccessat(
+    int *dfd, struct filename **filename,
+    int *mode, int *unused_flags);
+
+int ksu_user_path_at(int dfd,
+                     const char __user *name,
+                     unsigned flags,
+                     struct path *path,
+                     int *hook_arg,
+                     bool is_stat)
+{
+    struct filename *fname;
+
+    fname = getname_flags(name, flags, NULL);
+
+    if (IS_ERR(fname))
+        return PTR_ERR(fname);
+
+    if (!susfs_is_current_proc_umounted() &&
+        __ksu_is_allow_uid_for_current(current_uid().val)) {
+
+        if (is_stat)
+            ksu_handle_stat(&dfd, &fname, hook_arg);
+        else
+            ksu_handle_faccessat(
+                &dfd, &fname, hook_arg, NULL);
+    }
+
+    return filename_lookup(dfd, fname, flags, path, NULL);
+}
+
+#endif
 }
 
 /* Returns 0 and nd will be valid on success; Retuns error, otherwise. */

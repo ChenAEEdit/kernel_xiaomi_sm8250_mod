@@ -423,7 +423,15 @@ orig_flow:
 
 	old_cred = override_creds(override_cred);
 retry:
-	res = user_path_at(dfd, filename, lookup_flags, &path);
+// 同样删除 do_faccessat() 中原来的旧 KernelSU 调用块和旧函数声明。
+#ifdef CONFIG_KSU_SUSFS
+    res = ksu_user_path_at(
+        dfd, filename, lookup_flags,
+        &path, &mode, false);
+#else
+    res = user_path_at(
+        dfd, filename, lookup_flags, &path);
+#endif
 	if (res)
 		goto out;
 

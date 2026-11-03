@@ -120,5 +120,14 @@ retry_estale(const long error, const unsigned int flags)
 {
 	return error == -ESTALE && !(flags & LOOKUP_REVAL);
 }
+// 实验性适配方案
+#ifdef CONFIG_KSU_SUSFS
+int ksu_user_path_at(int dfd,
+                     const char __user *name,
+                     unsigned flags,
+                     struct path *path,
+                     int *hook_arg,
+                     bool is_stat);
+#endif
 
 #endif /* _LINUX_NAMEI_H */
